@@ -1,0 +1,17 @@
+{
+  "appID": "6192cde8cd9740dab0d53a7c0099ffae",
+  "dependencies": {
+    "devkit-core": "https://github.com/gameclosure/devkit-core#v4.5.3"
+  },
+  "shortName": "arkanoid",
+  "studio": {
+    "domain": "studio.example.com",
+    "name": "Your Studio Name",
+    "stagingDomain": "staging.example.com"
+  },
+  "supportedOrientations": [
+    "portrait",
+    "landscape"
+  ],
+  "title": "arkanoid"
+}
