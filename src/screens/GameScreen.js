@@ -1,5 +1,7 @@
 import device;
 
+import math.geom.Point as Point;
+
 import ui.ImageView as ImageView;
 
 import ..models.Paddle as Paddle;
@@ -44,7 +46,8 @@ exports = Class(ImageView, function(supr) {
     this._ball = new Ball({
       superview: this,
       x: this.initialPaddleX + (Paddle.PADDLE_WIDTH / 2) - Ball.BALL_RADIUS,
-      y: this.initialPaddleY - (Ball.BALL_RADIUS * 2)
+      y: this.initialPaddleY - (Ball.BALL_RADIUS * 2),
+      velocity: new Point(10, -50)
     });
 
     console.log('test');

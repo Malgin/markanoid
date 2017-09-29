@@ -1,3 +1,5 @@
+import math.geom.Point as Point;
+
 import ui.ImageView as ImageView;
 
 import .Paddle;
@@ -6,6 +8,9 @@ exports = Class(ImageView, function (supr) {
 
   this.init = function (opts) {
 
+    this.moving = true;
+    this.velocity = opts.velocity || new Point(5, 10);
+
     opts = merge(opts, {
       image: 'resources/images/fireball.png',
       width: exports.BALL_RADIUS * 2,
@@ -13,7 +18,15 @@ exports = Class(ImageView, function (supr) {
     });
 
     supr(this, 'init', [opts]);
-  }
+  };
+
+  this.tick = function (dt) {
+
+    if (this.moving && this.getPosition().x !== 0) {
+      this.style.x += this.velocity.x * (dt / 1000);
+      this.style.y += this.velocity.y * (dt / 1000);
+    }
+  };
 
 });
 
