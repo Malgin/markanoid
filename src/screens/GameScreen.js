@@ -2,11 +2,8 @@ import device;
 
 import ui.ImageView as ImageView;
 
-const PADDLE_WIDTH = 100;
-const PADDLE_HEIGHT = 15;
-const PADDLE_BOTTOM_PADDING = 50;
-
-const BALL_RADIUS = 15;
+import ..models.Paddle as Paddle;
+import ..models.Ball as Ball;
 
 exports = Class(ImageView, function(supr) {
 
@@ -26,36 +23,28 @@ exports = Class(ImageView, function(supr) {
     this.width = device.width / device.devicePixelRatio;
     this.height = device.height / device.devicePixelRatio;
 
-    this.initialPaddleX = (this.width / 2) - (PADDLE_WIDTH / 2);
-    this.initialPaddleY = (this.height) - PADDLE_BOTTOM_PADDING - (PADDLE_HEIGHT / 2);
+    this.initialPaddleX = (this.width / 2) - (Paddle.PADDLE_WIDTH / 2);
+    this.initialPaddleY = (this.height) - Paddle.PADDLE_BOTTOM_PADDING - (Paddle.PADDLE_HEIGHT / 2);
 
-    this._playerPaddle = new ImageView({
+    this._playerPaddle = new Paddle({
       superview: this,
       x: this.initialPaddleX,
-      y: this.initialPaddleY,
-      width: PADDLE_WIDTH,
-      height: PADDLE_HEIGHT,
-      canHandleEvents: false,
-      backgroundColor: '#fff'
+      y: this.initialPaddleY
     });
 
     this.on('InputMove', bind(this, function (event, point) {
 
-      if (point.x > (PADDLE_WIDTH / 2) && point.x < (this.width - PADDLE_WIDTH / 2)) {
+      if (point.x > (Paddle.PADDLE_WIDTH / 2) && point.x < (this.width - Paddle.PADDLE_WIDTH / 2)) {
         this._playerPaddle.updateOpts({
-          x: point.x - (PADDLE_WIDTH / 2)
+          x: point.x - (Paddle.PADDLE_WIDTH / 2)
         });
       }
     }));
 
-    // spawn a ball
-    this._ball = new ImageView({
+    this._ball = new Ball({
       superview: this,
-      image: 'resources/images/fireball.png',
-      x: this.initialPaddleX + (PADDLE_WIDTH / 2) - BALL_RADIUS,
-      y: this.initialPaddleY - (BALL_RADIUS * 2),
-      width: BALL_RADIUS * 2,
-      height: BALL_RADIUS * 2
+      x: this.initialPaddleX + (Paddle.PADDLE_WIDTH / 2) - Ball.BALL_RADIUS,
+      y: this.initialPaddleY - (Ball.BALL_RADIUS * 2)
     });
 
     console.log('test');
