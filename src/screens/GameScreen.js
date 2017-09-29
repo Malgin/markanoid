@@ -23,17 +23,25 @@ exports = Class(ImageView, function(supr) {
   };
 
   this.build = function() {
-    // build a player paddle
+
     this._playerPaddle = new ImageView({
       superview: this,
       x: (this.width / 2) - (PADDLE_WIDTH / 2),
       y: (this.height) - PADDLE_BOTTOM_PADDING - (PADDLE_HEIGHT / 2),
       width: PADDLE_WIDTH,
       height: PADDLE_HEIGHT,
+      canHandleEvents: false,
       backgroundColor: '#fff'
     });
 
-    console.log('test');
+    this.on('InputMove', bind(this, function (event, point) {
+
+      if (point.x > (PADDLE_WIDTH / 2) && point.x < (this.width - PADDLE_WIDTH / 2)) {
+        this._playerPaddle.updateOpts({
+          x: point.x - (PADDLE_WIDTH / 2)
+        });
+      }
+    }));
 
     // TODO build blocks layers
   };
