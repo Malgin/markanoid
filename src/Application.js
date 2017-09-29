@@ -9,20 +9,22 @@ exports = Class(GC.Application, function () {
 
   this.initUI = function () {
 
-    // scale
-    this.baseWidth = 1024;
-    this.baseHeight = 576;
-    this.scale = this.baseHeight / this.baseWidth;
-    this.view.style.scale = this.scale;
+    this.engine.updateOpts({
+      preload: ['resources/images']
+    });
+
+    var rootViewWidth = device.width / device.devicePixelRatio;
+    var rootViewHeight = device.height / device.devicePixelRatio;
+
+    this.view.style.scale = rootViewHeight / rootViewWidth;
 
     var rootView = new StackView({
       superview: this,
       x: 0,
       y: 0,
-      width: 1024,
-      height: 576,
+      width: rootViewWidth,
+      height: rootViewHeight,
       clip: true,
-      scale: device.width / 320
     });
 
     // TODO: initiate menu screen
