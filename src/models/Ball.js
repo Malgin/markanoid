@@ -8,7 +8,7 @@ exports = Class(ImageView, function (supr) {
 
   this.init = function (opts) {
 
-    this.moving = true;
+    this.moving = false;
     this.velocity = opts.velocity || new Point(5, 10);
 
     opts = merge(opts, {
@@ -22,7 +22,7 @@ exports = Class(ImageView, function (supr) {
 
   this.tick = function (dt) {
 
-    if (this.moving && this.getPosition().x !== 0) {
+    if (this.moving) {
       this.style.x += this.velocity.x * (dt / 1000);
       this.style.y += this.velocity.y * (dt / 1000);
     }
