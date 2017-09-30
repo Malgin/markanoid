@@ -71,8 +71,48 @@ exports = Class(ImageView, function(supr) {
     });
   };
 
-  this.tick = function (dt) {
+  this.tick = function () {
 
+    this._blockCollision();
+    this._wallsAndPaddleCollision();
+  };
+
+  this._blockCollision = function () {
+    // collide with bricks
+    for (var row = this._blockGrid._blockGrid.length - 1; row >= 0; row -= 1) {
+
+      var blockRow = this._blockGrid._blockGrid[row];
+
+      for (var col = 0; col < blockRow.length; col += 1) {
+        // detect collision
+        var block = blockRow[col];
+
+        if (block === null) continue;
+
+        if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
+
+          block.removeFromSuperview();
+          this._blockGrid._blockGrid[row][col] = null;
+
+          // figure out from which direction we had a collision
+          if (this._ball.style.x + Ball.BALL_RADIUS * 2 > block.style.x + 1 ||
+              this._ball.style.x < block.style.x + Block.BLOCK_WIDTH - 1) {
+
+            this._ball.velocity.y = -1 * this._ball.velocity.y;
+            this._ball.increaseSpeedIfNeeded();
+          } else {
+
+            this._ball.velocity.x = -1 * this._ball.velocity.x;
+            this._ball.increaseSpeedIfNeeded();
+          }
+
+          return;
+        }
+      }
+    }
+  };
+
+  this._wallsAndPaddleCollision = function () {
     // make ball bounce off field edges
     if (this._ball.moving) {
       if (this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH) || this._ball.style.x <= BOUNCABLE_BORDER_WIDTH) {
@@ -85,44 +125,6 @@ exports = Class(ImageView, function(supr) {
           this._ball.style.y >= this.height - BOUNCABLE_BORDER_WIDTH) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
         this._ball.increaseSpeedIfNeeded();
-      }
-
-      var collisionFound = false;
-      afterCollisionCycle:
-      if (!collisionFound) {
-        // collide with bricks
-        for (var row = this._blockGrid._blockGrid.length - 1; row >= 0; row -= 1) {
-
-          var blockRow = this._blockGrid._blockGrid[row];
-
-          for (var col = 0; col < blockRow.length; col += 1) {
-            // detect collision
-            var block = blockRow[col];
-
-            if (block === null) continue;
-
-            if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
-
-              block.removeFromSuperview();
-              this._blockGrid._blockGrid[row][col] = null;
-
-              // figure out from which direction we had a collision
-              if (this._ball.style.x + Ball.BALL_RADIUS * 2 > block.style.x + 1 ||
-                  this._ball.style.x < block.style.x + Block.BLOCK_WIDTH - 1) {
-
-                this._ball.velocity.y = -1 * this._ball.velocity.y;
-                this._ball.increaseSpeedIfNeeded();
-              } else {
-
-                this._ball.velocity.x = -1 * this._ball.velocity.x;
-                this._ball.increaseSpeedIfNeeded();
-              }
-
-              collisionFound = true;
-              break afterCollisionCycle; // don't run further checks, as we found a collision
-            }
-          }
-        }
       }
 
       // TODO make ball appear on other side of an edge
