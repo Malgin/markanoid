@@ -7,6 +7,7 @@ import ui.ImageView as ImageView;
 
 import ..models.Paddle as Paddle;
 import ..models.Ball as Ball;
+import ..models.block.Block as Block;
 
 import ..services.BlockGrid as BlockGrid;
 
@@ -85,6 +86,42 @@ exports = Class(ImageView, function(supr) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
         this._ball.increaseSpeedIfNeeded();
       }
+
+      var collisionFound = false;
+      afterCollisionCycle:
+      if (!collisionFound) {
+        // collide with bricks
+        for (var row = this._blockGrid._blockGrid.length - 1; row >= 0; row -= 1) {
+
+          var blockRow = this._blockGrid._blockGrid[row];
+
+          for (var col = 0; col < blockRow.length; col += 1) {
+            // detect collision
+            var block = blockRow[col];
+
+            if (block === null) continue;
+
+            if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
+
+              // figure out from which direction we had a collision
+              if (this._ball.style.x + Ball.BALL_RADIUS * 2 > block.style.x + 1 ||
+                  this._ball.style.x < block.style.x + Block.BLOCK_WIDTH - 1) {
+                // collided either from bottom or from top
+                this._ball.velocity.y = -1 * this._ball.velocity.y;
+                this._ball.increaseSpeedIfNeeded();
+              } else {
+                this._ball.velocity.x = -1 * this._ball.velocity.x;
+                this._ball.increaseSpeedIfNeeded();
+              }
+
+              collisionFound = true;
+              break afterCollisionCycle; // don't run further checks, as we found a collision
+            }
+          }
+        }
+      }
+
+      return;
 
       // TODO make ball appear on other side of an edge
     }
