@@ -67,7 +67,7 @@ exports = Class(ImageView, function(supr) {
     // build blocks layers
     this._blockGrid = new BlockGrid({
       superview: this,
-      level: 1
+      level: 2
     });
   };
 
@@ -95,8 +95,8 @@ exports = Class(ImageView, function(supr) {
           this._blockGrid._blockGrid[row][col] = null;
 
           // figure out from which direction we had a collision
-          if (this._ball.style.x + Ball.BALL_RADIUS * 2 > block.style.x + 1 ||
-              this._ball.style.x < block.style.x + Block.BLOCK_WIDTH - 1) {
+          if (this._ball.getCollisionCircle().x >= block.style.x &&
+              this._ball.getCollisionCircle().x <= block.style.x + Block.BLOCK_WIDTH) {
 
             this._ball.velocity.y = -1 * this._ball.velocity.y;
             this._ball.increaseVelocityIfNeeded();
