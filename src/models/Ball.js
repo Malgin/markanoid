@@ -3,9 +3,9 @@ import math.geom.Circle as Circle;
 
 import ui.ImageView as ImageView;
 
-const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 500;
-const MAX_BALL_X_ABS_VELOCITY = 5;
-const MAX_BALL_Y_ABS_VELOCITY = 7;
+const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 10;
+const MAX_BALL_X_ABS_VELOCITY = 15;
+const MAX_BALL_Y_ABS_VELOCITY = 20;
 
 exports = Class(ImageView, function (supr) {
 
@@ -13,7 +13,7 @@ exports = Class(ImageView, function (supr) {
 
     this.moving = false;
     this.velocity = opts.velocity || new Point(5, 10);
-    this.originalVelocity = this.velocity;
+    this.originalVelocity = new Point(this.velocity.x, this.velocity.y);
     this.originalPosition = new Point(opts.x, opts.y);
     this.collisionCircle = new Circle(opts.x + exports.BALL_RADIUS, opts.y + exports.BALL_RADIUS, exports.BALL_RADIUS);
     this.bounceCounter = 0;
@@ -80,12 +80,17 @@ exports = Class(ImageView, function (supr) {
       return this.moving && this.velocity.y > 0;
   };
 
+  this.movingUp = function () {
+      return this.moving && this.velocity.y < 0;
+  };
+
   this.resetPosition = function () {
       this.updateOpts({
         x: this.originalPosition.x,
         y: this.originalPosition.y
       });
       this.velocity = this.originalVelocity;
+      this.originalVelocity = new Point(this.velocity.x, this.velocity.y);
   };
 
   this.tick = function (dt) {

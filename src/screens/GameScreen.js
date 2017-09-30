@@ -45,7 +45,7 @@ exports = Class(ImageView, function(supr) {
       superview: this,
       x: this.initialPaddleX + (Paddle.PADDLE_WIDTH * 2 / 3) - Ball.BALL_RADIUS,
       y: this.initialPaddleY - (Ball.BALL_RADIUS * 2),
-      velocity: new Point(5, -8)
+      velocity: new Point(3, -8)
     });
 
     this.on('InputMove', bind(this, function (event, point) {
@@ -129,7 +129,8 @@ exports = Class(ImageView, function(supr) {
 
     // make ball bounce off field edges
     if (this._ball.moving) {
-      if (this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH) || this._ball.style.x <= BOUNCABLE_BORDER_WIDTH) {
+      if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH)) && this._ball.movingRight() ||
+          (this._ball.style.x <= BOUNCABLE_BORDER_WIDTH) && this._ball.movingLeft()) {
         this._ball.velocity.x = -1 * this._ball.velocity.x; // bounce off walls
         this._ball.increaseVelocityIfNeeded();
       }
@@ -141,7 +142,7 @@ exports = Class(ImageView, function(supr) {
         this._ball.increaseVelocityIfNeeded();
       }
 
-      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox)) {
+      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingUp()) {
 
         if (this._ball.velocity.x === 0) this._ball.velocity.x = 3;
         else if (Math.abs(this._ball.velocity.x) < 3) {
@@ -156,7 +157,7 @@ exports = Class(ImageView, function(supr) {
             if (this._ball.movingLeft()) {
 
               this._ball.increaseXVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.x) / 4));
-              this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
             } else if (this._ball.movingRight()) {
               this._ball.velocity.x = -1 * this._ball.velocity.x;
             }
@@ -170,8 +171,9 @@ exports = Class(ImageView, function(supr) {
             if (this._ball.movingLeft()) {
               this._ball.velocity.x = -1 * this._ball.velocity.x;
             } else if (this._ball.movingRight()) {
+
               this._ball.increaseXVelocity(Math.ceil(Math.abs(this._ball.velocity.x) / 4));
-              this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
             }
 
             console.log(`Increase VELOCITY: X: ${this._ball.velocity.x} Y: ${this._ball.velocity.y }`);

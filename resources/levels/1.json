@@ -5,5 +5,5 @@
     ["white", null, "white", "white", null, "white"],
     ["white", "white", "white", "white", "white", "white"],
     ["white", "white", null, null, "white", "white"],
-    ["white", "white", "white", "white", "white", "white"]
+    [null, "white", "white", "white", "white", null]
 ]}
