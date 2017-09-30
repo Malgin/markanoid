@@ -141,7 +141,7 @@ exports = Class(ImageView, function(supr) {
         this._ball.increaseVelocityIfNeeded();
       }
 
-      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown()) {
+      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox)) {
 
         if (this._ball.velocity.x === 0) this._ball.velocity.x = 3;
         else if (Math.abs(this._ball.velocity.x) < 3) {
@@ -153,12 +153,12 @@ exports = Class(ImageView, function(supr) {
             // hit left edge of a paddle
             console.log(`BEFORE Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
 
-            this._ball.increaseXVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.x) / 4));
-
             if (this._ball.movingLeft()) {
+
+              this._ball.increaseXVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.x) / 4));
               this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
             } else if (this._ball.movingRight()) {
-              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+              this._ball.velocity.x = -1 * this._ball.velocity.x;
             }
 
             console.log(`Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
@@ -167,11 +167,10 @@ exports = Class(ImageView, function(supr) {
             // hit right edge of a paddle
             console.log(`BEFORE Increase VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y }`);
 
-            this._ball.increaseXVelocity(Math.ceil(Math.abs(this._ball.velocity.x) / 4));
-
             if (this._ball.movingLeft()) {
-              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+              this._ball.velocity.x = -1 * this._ball.velocity.x;
             } else if (this._ball.movingRight()) {
+              this._ball.increaseXVelocity(Math.ceil(Math.abs(this._ball.velocity.x) / 4));
               this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
             }
 
