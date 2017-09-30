@@ -3,7 +3,7 @@ import math.geom.Circle as Circle;
 
 import ui.ImageView as ImageView;
 
-const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 10;
+const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 500;
 const MAX_BALL_X_ABS_VELOCITY = 15;
 const MAX_BALL_Y_ABS_VELOCITY = 20;
 
@@ -14,6 +14,7 @@ exports = Class(ImageView, function (supr) {
     this.moving = false;
     this.velocity = opts.velocity || new Point(5, 10);
     this.collisionCircle = new Circle(opts.x + exports.BALL_RADIUS, opts.y + exports.BALL_RADIUS, exports.BALL_RADIUS);
+    this.bounceCounter = 0;
 
     opts = merge(opts, {
       image: 'resources/images/fireball.png',
@@ -33,11 +34,11 @@ exports = Class(ImageView, function (supr) {
 
   this.increaseSpeedIfNeeded = function() {
 
-    if (Math.abs(this.velocity.x) < MAX_BALL_X_ABS_VELOCITY && Math.abs(this.velocity.y) < MAX_BALL_Y_ABS_VELOCITY) {
+    if (Math.abs(this.velocity.x) >= MAX_BALL_X_ABS_VELOCITY && Math.abs(this.velocity.y) >= MAX_BALL_Y_ABS_VELOCITY) {
       return;
     }
 
-    if (this.bounceCounter++ > NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE) {
+    if (++this.bounceCounter >= NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE) {
       if (Math.abs(this.velocity.x) < MAX_BALL_X_ABS_VELOCITY) {
         this.velocity.x = Math.sign(this.velocity.x) * (Math.abs(this.velocity.x) + 1);
       }

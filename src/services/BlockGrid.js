@@ -30,7 +30,7 @@ exports = Class(function () {
         var blockColor = levelRow[col];
 
         if (blockColor !== null) {
-          var blockView = this._blockPool.obtainView();
+          var blockView = this._obtainView();
 
           blockView.updateOpts({
             superview: this.superview,
@@ -47,4 +47,14 @@ exports = Class(function () {
       }
     }
   };
+
+  this._obtainView = function () {
+    var view = this._blockPool.obtainView();
+
+    view.on('ViewRemoved', bind(this, function () {
+      this._blockPool.releaseView(view);
+    }));
+
+    return view;
+  }
 });

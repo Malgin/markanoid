@@ -103,13 +103,17 @@ exports = Class(ImageView, function(supr) {
 
             if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
 
+              block.removeFromSuperview();
+              this._blockGrid._blockGrid[row][col] = null;
+
               // figure out from which direction we had a collision
               if (this._ball.style.x + Ball.BALL_RADIUS * 2 > block.style.x + 1 ||
                   this._ball.style.x < block.style.x + Block.BLOCK_WIDTH - 1) {
-                // collided either from bottom or from top
+
                 this._ball.velocity.y = -1 * this._ball.velocity.y;
                 this._ball.increaseSpeedIfNeeded();
               } else {
+
                 this._ball.velocity.x = -1 * this._ball.velocity.x;
                 this._ball.increaseSpeedIfNeeded();
               }
@@ -120,8 +124,6 @@ exports = Class(ImageView, function(supr) {
           }
         }
       }
-
-      return;
 
       // TODO make ball appear on other side of an edge
     }
