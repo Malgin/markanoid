@@ -3,8 +3,6 @@ import math.geom.Circle as Circle;
 
 import ui.ImageView as ImageView;
 
-import .Paddle;
-
 const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 10;
 const MAX_BALL_X_ABS_VELOCITY = 15;
 const MAX_BALL_Y_ABS_VELOCITY = 20;

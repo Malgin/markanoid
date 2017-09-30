@@ -1,0 +1,7 @@
+{
+  "name": "1",
+  "next": "2",
+  "levelLayout": [
+    ["white", null, "white", "white", null, "white"],
+    ["white", "white", "white", "white", "white", "white"]
+]}

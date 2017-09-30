@@ -8,6 +8,8 @@ import ui.ImageView as ImageView;
 import ..models.Paddle as Paddle;
 import ..models.Ball as Ball;
 
+import ..services.BlockGrid as BlockGrid;
+
 const BOUNCABLE_BORDER_WIDTH = 10;
 
 exports = Class(ImageView, function(supr) {
@@ -58,11 +60,14 @@ exports = Class(ImageView, function(supr) {
     }));
 
     this.on('InputStart', bind(this, function () {
-
       if (!this._ball.moving) this._ball.moving = true;
     }));
 
-    // TODO build blocks layers
+    // build blocks layers
+    this._blockGrid = new BlockGrid({
+      superview: this,
+      level: 1
+    });
   };
 
   this.tick = function (dt) {
