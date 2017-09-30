@@ -9,10 +9,11 @@ exports = Class(function () {
   this.init = function (opts) {
 
     this.superview = opts.superview;
-    this.currentLevelLayout = JSON.parse(CACHE[`resources/levels/${opts.level}.json`]);
+    this.levelLayout = opts.layout;
 
     this._blockPool = new BlockPool();
     this._blockGrid = [];
+    this.blockCount = 0;
 
     this.build();
   };
@@ -20,10 +21,10 @@ exports = Class(function () {
   this.build = function () {
 
     // iterate over layout levels
-    for (var row = 0; row < this.currentLevelLayout.levelLayout.length; row++) {
+    for (var row = 0; row < this.levelLayout.length; row++) {
 
       this._blockGrid[row] = [];
-      var levelRow = this.currentLevelLayout.levelLayout[row];
+      var levelRow = this.levelLayout[row];
 
       for (var col = 0; col < levelRow.length; col++) {
 
@@ -41,6 +42,7 @@ exports = Class(function () {
           });
 
           this._blockGrid[row][col] = blockView;
+          this.blockCount += 1;
         } else {
           this._blockGrid[row][col] = null;
         }
@@ -53,6 +55,7 @@ exports = Class(function () {
 
     view.on('ViewRemoved', bind(this, function () {
       this._blockPool.releaseView(view);
+      this.blockCount -= 1;
     }));
 
     return view;

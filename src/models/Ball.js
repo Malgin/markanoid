@@ -13,6 +13,8 @@ exports = Class(ImageView, function (supr) {
 
     this.moving = false;
     this.velocity = opts.velocity || new Point(5, 10);
+    this.originalVelocity = this.velocity;
+    this.originalPosition = new Point(opts.x, opts.y);
     this.collisionCircle = new Circle(opts.x + exports.BALL_RADIUS, opts.y + exports.BALL_RADIUS, exports.BALL_RADIUS);
     this.bounceCounter = 0;
     this.previousPosition = new Point();
@@ -76,7 +78,15 @@ exports = Class(ImageView, function (supr) {
 
   this.movingDown = function () {
       return this.moving && this.velocity.y > 0;
-  }
+  };
+
+  this.resetPosition = function () {
+      this.updateOpts({
+        x: this.originalPosition.x,
+        y: this.originalPosition.y
+      });
+      this.velocity = this.originalVelocity;
+  };
 
   this.tick = function (dt) {
 

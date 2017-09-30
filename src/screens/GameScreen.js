@@ -10,6 +10,7 @@ import ..models.Ball as Ball;
 import ..models.block.Block as Block;
 
 import ..services.BlockGrid as BlockGrid;
+import ..services.LevelManager as LevelManager;
 
 const BOUNCABLE_BORDER_WIDTH = 10;
 
@@ -33,8 +34,6 @@ exports = Class(ImageView, function(supr) {
 
     this.initialPaddleX = (this.width / 2) - (Paddle.PADDLE_WIDTH / 2);
     this.initialPaddleY = (this.height) - Paddle.PADDLE_BOTTOM_PADDING - (Paddle.PADDLE_HEIGHT / 2);
-
-    this.bounceCounter = 0;
 
     this._playerPaddle = new Paddle({
       superview: this,
@@ -64,11 +63,10 @@ exports = Class(ImageView, function(supr) {
       if (!this._ball.moving) this._ball.moving = true;
     }));
 
-    // build blocks layers
-    this._blockGrid = new BlockGrid({
-      superview: this,
-      level: 2
+    this._levelManager = new LevelManager({
+      gridSuperview: this
     });
+    this._blockGrid = this._levelManager.initLevel();
   };
 
   this.tick = function () {
@@ -78,13 +76,11 @@ exports = Class(ImageView, function(supr) {
   };
 
   this._blockCollision = function () {
-    // collide with bricks
     for (var row = this._blockGrid._blockGrid.length - 1; row >= 0; row -= 1) {
 
       var blockRow = this._blockGrid._blockGrid[row];
 
       for (var col = 0; col < blockRow.length; col += 1) {
-        // detect collision
         var block = blockRow[col];
 
         if (block === null) continue;
@@ -106,7 +102,21 @@ exports = Class(ImageView, function(supr) {
             this._ball.increaseVelocityIfNeeded();
           }
 
-          return;
+          if (this._blockGrid.blockCount === 0) {
+            // level complete
+            if (this._levelManager.hasNextLevel()) {
+
+              this._ball.moving = false;
+              this._ball.resetPosition();
+              this._playerPaddle.resetPosition();
+
+              this._blockGrid = this._levelManager.initNextLevel();
+            } else {
+              // win the game, back to menu
+            }
+          }
+
+          return; // stop iterating over blocks, as we've found a collision
         }
       }
     }
@@ -136,7 +146,7 @@ exports = Class(ImageView, function(supr) {
         if (this._ball.velocity.x === 0) this._ball.velocity.x = 3;
         else if (Math.abs(this._ball.velocity.x) < 3) {
           if (this._ball.velocity.x < 0) this._ball.velocity.x = -3;
-          else                        this._ball.velocity.x = 3;
+          else                           this._ball.velocity.x = 3;
         } else {
           if (ballCollisionCircle.x < paddleCollisionBox.x + (paddleCollisionBox.width / 5)) {
 

@@ -1,3 +1,4 @@
+import math.geom.Point as Point;
 import math.geom.Rect as Rectangle;
 
 import ui.ImageView as ImageView
@@ -6,6 +7,7 @@ exports = Class(ImageView, function (supr) {
 
   this.init = function (opts) {
 
+    this.originalPosition = new Point(opts.x, opts.y);
     this.collisionBox = new Rectangle(opts.x, opts.y, exports.PADDLE_WIDTH, exports.PADDLE_HEIGHT);
 
     opts = merge(opts, {
@@ -23,6 +25,13 @@ exports = Class(ImageView, function (supr) {
     this.collisionBox.x = this.style.x;
     this.collisionBox.y = this.style.y;
     return this.collisionBox;
+  };
+
+  this.resetPosition = function () {
+    this.updateOpts({
+      x: this.originalPosition.x,
+      y: this.originalPosition.y
+    })
   };
 });
 
