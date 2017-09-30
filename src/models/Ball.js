@@ -72,6 +72,10 @@ exports = Class(ImageView, function (supr) {
 
   this.movingLeft = function () {
       return this.moving && this.velocity.x < 0;
+  };
+
+  this.movingDown = function () {
+      return this.moving && this.velocity.y > 0;
   }
 
   this.tick = function (dt) {

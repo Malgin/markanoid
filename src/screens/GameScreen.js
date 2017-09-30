@@ -44,7 +44,7 @@ exports = Class(ImageView, function(supr) {
 
     this._ball = new Ball({
       superview: this,
-      x: this.initialPaddleX + (Paddle.PADDLE_WIDTH / 2) - Ball.BALL_RADIUS,
+      x: this.initialPaddleX + (Paddle.PADDLE_WIDTH * 2 / 3) - Ball.BALL_RADIUS,
       y: this.initialPaddleY - (Ball.BALL_RADIUS * 2),
       velocity: new Point(5, -8)
     });
@@ -56,7 +56,7 @@ exports = Class(ImageView, function(supr) {
       }
 
       if (!this._ball.moving) {
-        this._ball.style.x = this._playerPaddle.style.x + (Paddle.PADDLE_WIDTH / 2) - Ball.BALL_RADIUS;
+        this._ball.style.x = this._playerPaddle.style.x + (Paddle.PADDLE_WIDTH * 2 / 3) - Ball.BALL_RADIUS;
       }
     }));
 
@@ -125,20 +125,20 @@ exports = Class(ImageView, function(supr) {
       }
 
       if (this._ball.style.y <= BOUNCABLE_BORDER_WIDTH ||
-          intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) ||
+          (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown()) ||
           this._ball.style.y >= this.height - BOUNCABLE_BORDER_WIDTH) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
         this._ball.increaseVelocityIfNeeded();
       }
 
-      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox)) {
+      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown()) {
 
         if (this._ball.velocity.x === 0) this._ball.velocity.x = 3;
         else if (Math.abs(this._ball.velocity.x) < 3) {
           if (this._ball.velocity.x < 0) this._ball.velocity.x = -3;
           else                        this._ball.velocity.x = 3;
         } else {
-          if (ballCollisionCircle.x < paddleCollisionBox.x + (paddleCollisionBox.width / 4)) {
+          if (ballCollisionCircle.x < paddleCollisionBox.x + (paddleCollisionBox.width / 5)) {
 
             // hit left edge of a paddle
             console.log(`BEFORE Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
@@ -146,26 +146,26 @@ exports = Class(ImageView, function(supr) {
             this._ball.increaseXVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.x) / 4));
 
             if (this._ball.movingLeft()) {
-              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
-            } else if (this._ball.movingRight()) {
               this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+            } else if (this._ball.movingRight()) {
+              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
             }
 
             console.log(`Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
-          } else if (ballCollisionCircle.x > paddleCollisionBox.x + paddleCollisionBox.width - (paddleCollisionBox.width / 4)) {
+          } else if (ballCollisionCircle.x > paddleCollisionBox.x + paddleCollisionBox.width - (paddleCollisionBox.width / 5)) {
 
             // hit right edge of a paddle
-            console.log(`BEFORE Increase VELOCITY: ${this._ball.velocity.x }`);
+            console.log(`BEFORE Increase VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y }`);
 
             this._ball.increaseXVelocity(Math.ceil(Math.abs(this._ball.velocity.x) / 4));
 
             if (this._ball.movingLeft()) {
-              this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
-            } else if (this._ball.movingRight()) {
               this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+            } else if (this._ball.movingRight()) {
+              this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
             }
 
-            console.log(`Increase VELOCITY: ${this._ball.velocity.x}`);
+            console.log(`Increase VELOCITY: X: ${this._ball.velocity.x} Y: ${this._ball.velocity.y }`);
           }
         }
       }
