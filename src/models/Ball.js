@@ -4,8 +4,8 @@ import math.geom.Circle as Circle;
 import ui.ImageView as ImageView;
 
 const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 500;
-const MAX_BALL_X_ABS_VELOCITY = 15;
-const MAX_BALL_Y_ABS_VELOCITY = 20;
+const MAX_BALL_X_ABS_VELOCITY = 5;
+const MAX_BALL_Y_ABS_VELOCITY = 7;
 
 exports = Class(ImageView, function (supr) {
 
@@ -15,6 +15,7 @@ exports = Class(ImageView, function (supr) {
     this.velocity = opts.velocity || new Point(5, 10);
     this.collisionCircle = new Circle(opts.x + exports.BALL_RADIUS, opts.y + exports.BALL_RADIUS, exports.BALL_RADIUS);
     this.bounceCounter = 0;
+    this.previousPosition = new Point();
 
     opts = merge(opts, {
       image: 'resources/images/fireball.png',
@@ -32,7 +33,7 @@ exports = Class(ImageView, function (supr) {
     return this.collisionCircle;
   };
 
-  this.increaseSpeedIfNeeded = function() {
+  this.increaseVelocityIfNeeded = function() {
 
     if (Math.abs(this.velocity.x) >= MAX_BALL_X_ABS_VELOCITY && Math.abs(this.velocity.y) >= MAX_BALL_Y_ABS_VELOCITY) {
       return;
@@ -49,11 +50,36 @@ exports = Class(ImageView, function (supr) {
     }
   };
 
+  this.increaseXVelocity = function (value) {
+    if (Math.abs(this.velocity.x + value) <= MAX_BALL_X_ABS_VELOCITY) {
+      this.velocity.x = this.velocity.x + value;
+    } else {
+      this.velocity.x = Math.sign(this.velocity.x) * MAX_BALL_X_ABS_VELOCITY;
+    }
+  };
+
+  this.increaseYVelocity = function (value) {
+    if (Math.abs(this.velocity.y + value) <= MAX_BALL_Y_ABS_VELOCITY) {
+      this.velocity.y = this.velocity.y + value;
+    } else {
+      this.velocity.y = Math.sign(this.velocity.y) * MAX_BALL_Y_ABS_VELOCITY;
+    }
+  };
+
+  this.movingRight = function () {
+      return this.moving && this.velocity.x > 0;
+  };
+
+  this.movingLeft = function () {
+      return this.moving && this.velocity.x < 0;
+  }
+
   this.tick = function (dt) {
 
     if (this.moving) {
-      // this.style.x += this.velocity.x * (dt / 1000);
-      // this.style.y += this.velocity.y * (dt / 1000);
+      this.previousPosition.x = this.style.x;
+      this.previousPosition.y = this.style.y;
+
       this.style.x += this.velocity.x;
       this.style.y += this.velocity.y;
     }

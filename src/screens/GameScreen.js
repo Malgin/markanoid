@@ -99,11 +99,11 @@ exports = Class(ImageView, function(supr) {
               this._ball.style.x < block.style.x + Block.BLOCK_WIDTH - 1) {
 
             this._ball.velocity.y = -1 * this._ball.velocity.y;
-            this._ball.increaseSpeedIfNeeded();
+            this._ball.increaseVelocityIfNeeded();
           } else {
 
             this._ball.velocity.x = -1 * this._ball.velocity.x;
-            this._ball.increaseSpeedIfNeeded();
+            this._ball.increaseVelocityIfNeeded();
           }
 
           return;
@@ -113,18 +113,61 @@ exports = Class(ImageView, function(supr) {
   };
 
   this._wallsAndPaddleCollision = function () {
+
+    var ballCollisionCircle = this._ball.getCollisionCircle();
+    var paddleCollisionBox = this._playerPaddle.getCollisionBox();
+
     // make ball bounce off field edges
     if (this._ball.moving) {
       if (this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH) || this._ball.style.x <= BOUNCABLE_BORDER_WIDTH) {
         this._ball.velocity.x = -1 * this._ball.velocity.x; // bounce off walls
-        this._ball.increaseSpeedIfNeeded();
+        this._ball.increaseVelocityIfNeeded();
       }
 
       if (this._ball.style.y <= BOUNCABLE_BORDER_WIDTH ||
-          intersect.circleAndRect(this._ball.getCollisionCircle(), this._playerPaddle.getCollisionBox()) ||
+          intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) ||
           this._ball.style.y >= this.height - BOUNCABLE_BORDER_WIDTH) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
-        this._ball.increaseSpeedIfNeeded();
+        this._ball.increaseVelocityIfNeeded();
+      }
+
+      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox)) {
+
+        if (this._ball.velocity.x === 0) this._ball.velocity.x = 3;
+        else if (Math.abs(this._ball.velocity.x) < 3) {
+          if (this._ball.velocity.x < 0) this._ball.velocity.x = -3;
+          else                        this._ball.velocity.x = 3;
+        } else {
+          if (ballCollisionCircle.x < paddleCollisionBox.x + (paddleCollisionBox.width / 4)) {
+
+            // hit left edge of a paddle
+            console.log(`BEFORE Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
+
+            this._ball.increaseXVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.x) / 4));
+
+            if (this._ball.movingLeft()) {
+              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+            } else if (this._ball.movingRight()) {
+              this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+            }
+
+            console.log(`Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
+          } else if (ballCollisionCircle.x > paddleCollisionBox.x + paddleCollisionBox.width - (paddleCollisionBox.width / 4)) {
+
+            // hit right edge of a paddle
+            console.log(`BEFORE Increase VELOCITY: ${this._ball.velocity.x }`);
+
+            this._ball.increaseXVelocity(Math.ceil(Math.abs(this._ball.velocity.x) / 4));
+
+            if (this._ball.movingLeft()) {
+              this._ball.increaseYVelocity(Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+            } else if (this._ball.movingRight()) {
+              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
+            }
+
+            console.log(`Increase VELOCITY: ${this._ball.velocity.x}`);
+          }
+        }
       }
 
       // TODO make ball appear on other side of an edge
