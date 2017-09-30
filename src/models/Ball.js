@@ -23,8 +23,10 @@ exports = Class(ImageView, function (supr) {
   this.tick = function (dt) {
 
     if (this.moving) {
-      this.style.x += this.velocity.x * (dt / 1000);
-      this.style.y += this.velocity.y * (dt / 1000);
+      // this.style.x += this.velocity.x * (dt / 1000);
+      // this.style.y += this.velocity.y * (dt / 1000);
+      this.style.x += this.velocity.x;
+      this.style.y += this.velocity.y;
     }
   };
 
