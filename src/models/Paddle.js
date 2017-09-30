@@ -1,8 +1,12 @@
+import math.geom.Rect as Rectangle;
+
 import ui.ImageView as ImageView
 
 exports = Class(ImageView, function (supr) {
 
   this.init = function (opts) {
+
+    this.collisionBox = new Rectangle(opts.x, opts.y, exports.PADDLE_WIDTH, exports.PADDLE_HEIGHT);
 
     opts = merge(opts, {
       width: exports.PADDLE_WIDTH,
@@ -12,7 +16,14 @@ exports = Class(ImageView, function (supr) {
     });
 
     supr(this, 'init', [opts]);
-  }
+  };
+
+  this.getCollisionBox = function () {
+
+    this.collisionBox.x = this.style.x;
+    this.collisionBox.y = this.style.y;
+    return this.collisionBox;
+  };
 });
 
 // "Class constants. I miss ES6."

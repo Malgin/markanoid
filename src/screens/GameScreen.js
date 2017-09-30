@@ -1,6 +1,7 @@
 import device;
 
 import math.geom.Point as Point;
+import math.geom.intersect as intersect;
 
 import ui.ImageView as ImageView;
 
@@ -8,9 +9,6 @@ import ..models.Paddle as Paddle;
 import ..models.Ball as Ball;
 
 const BOUNCABLE_BORDER_WIDTH = 10;
-const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 10;
-const MAX_BALL_X_ABS_VELOCITY = 15;
-const MAX_BALL_Y_ABS_VELOCITY = 20;
 
 exports = Class(ImageView, function(supr) {
 
@@ -73,47 +71,17 @@ exports = Class(ImageView, function(supr) {
     if (this._ball.moving) {
       if (this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH) || this._ball.style.x <= BOUNCABLE_BORDER_WIDTH) {
         this._ball.velocity.x = -1 * this._ball.velocity.x; // bounce off walls
-        this._increaseSpeedIfNeeded();
+        this._ball.increaseSpeedIfNeeded();
       }
 
       if (this._ball.style.y <= BOUNCABLE_BORDER_WIDTH ||
-          this._ballCollidesWithPaddle() ||
+          intersect.circleAndRect(this._ball.getCollisionCircle(), this._playerPaddle.getCollisionBox()) ||
           this._ball.style.y >= this.height - BOUNCABLE_BORDER_WIDTH) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
-        this._increaseSpeedIfNeeded();
+        this._ball.increaseSpeedIfNeeded();
       }
 
       // TODO make ball appear on other side of an edge
     }
-
   };
-
-  this._ballCollidesWithPaddle = function () {
-    var ballPosition = {
-      x: this._ball.style.x,
-      y: this._ball.style.y
-    };
-
-    var paddlePosition = {
-      x: this._playerPaddle.style.x,
-      y: this._playerPaddle.style.y
-    };
-
-    var intersectsPaddleVertically = ballPosition.y + Ball.BALL_RADIUS * 2 > paddlePosition.y && ballPosition.y + Ball.BALL_RADIUS * 2 <= paddlePosition.y + 4; // TODO fix magic number
-    var intersectsPaddleHorizontally = ballPosition.x >= (paddlePosition.x - Ball.BALL_RADIUS) && ballPosition.x <= (paddlePosition.x + Paddle.PADDLE_WIDTH - Ball.BALL_RADIUS);
-
-    return this._ball.moving && intersectsPaddleVertically && intersectsPaddleHorizontally;
-  }
-
-  this._increaseSpeedIfNeeded = function() {
-    if (this.bounceCounter++ > NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE) {
-      if (Math.abs(this._ball.velocity.x) < MAX_BALL_X_ABS_VELOCITY) {
-        this._ball.velocity.x = Math.sign(this._ball.velocity.x) * (Math.abs(this._ball.velocity.x) + 1);
-      }
-      if (Math.abs(this._ball.velocity.y) < MAX_BALL_Y_ABS_VELOCITY) {
-        this._ball.velocity.y = Math.sign(this._ball.velocity.y) * (Math.abs(this._ball.velocity.y) + 1);
-      }
-      this.bounceCounter = 0;
-    }
-  }
 });
