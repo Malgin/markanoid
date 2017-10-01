@@ -4,9 +4,9 @@
   "levelLayout": [
     [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
     [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, "asteroid_blue", null, null, null, null, "asteroid_blue", null, null],
     [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
-    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
-    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, "asteroid_blue", null, null, null, null, "asteroid_blue", null, null],
     [null, null, null, "moon_yellow", null, null, "moon_yellow", null, null, null],
-    [null, null, null, null, "moon_yellow", "moon_yellow", null, null, null, null]
+    [null, null, null, null, "asteroid_blue", "asteroid_blue", null, null, null, null]
 ]}

@@ -1,6 +1,8 @@
 import ui.ViewPool as ViewPool;
 
 import .MoonYellowBlock as MoonYellowBlock;
+import .SteelBlock as SteelBlock;
+import .AsteroidBlueBlock as AsteroidBlueBlock;
 
 exports = Class(ViewPool, function(supr) {
   this.init = function (opts) {
@@ -11,7 +13,14 @@ exports = Class(ViewPool, function(supr) {
       case 'moon_yellow':
         block = MoonYellowBlock;
         break;
+      case 'steel':
+        block = SteelBlock;
+        break;
+      case 'asteroid_blue':
+        block = AsteroidBlueBlock;
+        break;
       default:
+        console.log(opts.blockType);
         throw new Error('Unsupported block type');
     }
 
