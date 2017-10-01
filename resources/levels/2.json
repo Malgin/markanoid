@@ -2,11 +2,11 @@
   "name": "2",
   "next": "3",
   "levelLayout": [
-    [null, null, "white", null, null, null, null, "white", null, null],
-    [null, null, "white", null, null, null, null, "white", null, null],
-    [null, null, "white", null, null, null, null, "white", null, null],
-    [null, null, "white", null, null, null, null, "white", null, null],
-    [null, null, "white", null, null, null, null, "white", null, null],
-    [null, null, null, "white", null, null, "white", null, null, null],
-    [null, null, null, null, "white", "white", null, null, null, null]
+    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, "moon_yellow", null, null, null, null, "moon_yellow", null, null],
+    [null, null, null, "moon_yellow", null, null, "moon_yellow", null, null, null],
+    [null, null, null, null, "moon_yellow", "moon_yellow", null, null, null, null]
 ]}

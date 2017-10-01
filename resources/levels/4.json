@@ -1,6 +1,6 @@
 {
-  "name": "3",
-  "next": "4",
+  "name": "4",
+  "next": null,
   "levelLayout": [
     ["moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow"],
     [null, null, "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", "moon_yellow", null, null],
@@ -8,5 +8,5 @@
     [null, null, null, null, "moon_yellow", "moon_yellow", null, null, null, null],
     [null, null, null, null, "moon_yellow", "moon_yellow", null, null, null, null],
     [null, null, null, null, "moon_yellow", "moon_yellow", null, null, null, null],
-    [null, null, null, null, "moon_yellow", "moon_yellow", null, null, null, null]
+    [null, null, null, null, "stell", "steel", null, null, null, null]
 ]}

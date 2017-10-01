@@ -1,5 +1,5 @@
 import ..models.block.BlockPool as BlockPool;
-import ..models.block.Block as Block;
+import ..models.block.BaseBlock as Block;
 
 const BOUNCABLE_BORDER_WIDTH = 10;
 const DISTANCE_BETWEEN_BLOCKS = 5;
@@ -12,7 +12,7 @@ exports = Class(function () {
     this.superview = opts.superview;
     this.levelLayout = opts.layout;
 
-    this._blockPool = new BlockPool();
+    this._blockPools = {};
     this._blockGrid = [];
     this.blockCount = 0;
 
@@ -31,10 +31,10 @@ exports = Class(function () {
 
       for (var col = 0; col < levelRow.length; col++) {
 
-        var blockColor = levelRow[col];
+        var blockType = levelRow[col];
 
-        if (blockColor !== null) {
-          var blockView = this._obtainView();
+        if (blockType !== null) {
+          var blockView = this._obtainView(blockType);
 
           if (col === 0) {
             var xPosition = BOUNCABLE_BORDER_WIDTH + Block.BLOCK_WIDTH * this._blockGrid[row].length;
@@ -47,7 +47,6 @@ exports = Class(function () {
             superview: this.superview,
             x: xPosition,
             y: yPosition,
-            backgroundColor: '#fff', // TODO: make based config value
             visible: true
           });
 
@@ -60,13 +59,19 @@ exports = Class(function () {
     }
   };
 
-  this._obtainView = function () {
-    var view = this._blockPool.obtainView();
+  this.destroyBlock = function (block) {
+    block.removeFromSuperview();
+    this._blockPools[block.blockType].releaseView(block);
+    this.blockCount -= 1;
+  };
 
-    view.on('ViewRemoved', bind(this, function () {
-      this._blockPool.releaseView(view);
-      this.blockCount -= 1;
-    }));
+  this._obtainView = function (blockType) {
+    if (!this._blockPools[blockType]) {
+      this._blockPools[blockType] = new BlockPool({
+        blockType: blockType
+      });
+    }
+    var view = this._blockPools[blockType].obtainView();
 
     return view;
   }

@@ -7,7 +7,7 @@ import ui.ImageView as ImageView;
 
 import ..models.Paddle as Paddle;
 import ..models.Ball as Ball;
-import ..models.block.Block as Block;
+import ..models.block.BaseBlock as Block;
 
 import ..services.BlockGrid as BlockGrid;
 import ..services.LevelManager as LevelManager;
@@ -72,7 +72,7 @@ exports = Class(ImageView, function(supr) {
     this.on('game:reset', bind(this, function () {
       this._ball.resetPosition();
       this._playerPaddle.resetPosition();
-      this._blockGrid = this._levelManager.initLevel('1');
+      this._blockGrid = this._levelManager.initLevel('2');
 
       this.gameIsOn = true;
     }));
@@ -116,8 +116,28 @@ exports = Class(ImageView, function(supr) {
 
         if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
 
-          block.removeFromSuperview();
-          this._blockGrid._blockGrid[row][col] = null;
+          block.hit();
+
+          if (block.isDestroyed()) {
+            this._blockGrid.destroyBlock(block);
+
+            this._blockGrid._blockGrid[row][col] = null;
+
+            if (this._blockGrid.blockCount === 0) {
+              if (this._levelManager.hasNextLevel()) {
+
+                this._ball.resetPosition();
+                this._playerPaddle.resetPosition();
+
+                this._blockGrid = this._levelManager.initNextLevel();
+              } else {
+                // win the game, back to menu
+                this._endTheGame();
+              }
+
+              return;
+            }
+          }
 
           // figure out from which direction we had a collision
           if (this._ball.getCollisionCircle().x >= block.style.x &&
@@ -129,19 +149,6 @@ exports = Class(ImageView, function(supr) {
 
             this._ball.velocity.x = -1 * this._ball.velocity.x;
             this._ball.increaseVelocityIfNeeded();
-          }
-
-          if (this._blockGrid.blockCount === 0) {
-            if (this._levelManager.hasNextLevel()) {
-
-              this._ball.resetPosition();
-              this._playerPaddle.resetPosition();
-
-              this._blockGrid = this._levelManager.initNextLevel();
-            } else {
-              // win the game, back to menu
-              this._endTheGame();
-            }
           }
 
           return; // stop iterating over blocks, as we've found a collision
