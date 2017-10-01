@@ -13,24 +13,29 @@ exports = Class(GC.Application, function () {
       preload: ['resources/images']
     });
 
-    var rootViewWidth = device.width / device.devicePixelRatio;
-    var rootViewHeight = device.height / device.devicePixelRatio;
+    this.baseWidth = 576;
+    this.baseHeight = device.height * (this.baseWidth / device.width);
 
-    this.view.style.scale = rootViewHeight / rootViewWidth;
+    this.view.style.scale = device.width / this.baseWidth;
 
     var rootView = new StackView({
       superview: this,
       x: 0,
       y: 0,
-      width: rootViewWidth,
-      height: rootViewHeight,
-      clip: true,
+      width: this.baseWidth,
+      height: this.baseHeight,
+      clip: true
     });
 
     // TODO: initiate menu screen
 
     // Initiate game screen
-    var gameScreen = new GameScreen();
+    var gameScreen = new GameScreen({
+      x: 0,
+      y: 0,
+      width: this.baseWidth,
+      height: this.baseHeight
+    });
 
     rootView.push(gameScreen); // Start the game right away. TODO: add menu screens
 

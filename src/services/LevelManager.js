@@ -18,7 +18,7 @@ exports = Class(function () {
 
   this.hasNextLevel = function () {
     return this._currentLevel.next !== null;
-  }
+  };
 
   this.initNextLevel = function () {
     if (this._currentLevel.next !== null) {

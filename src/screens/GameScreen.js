@@ -18,6 +18,9 @@ exports = Class(ImageView, function(supr) {
 
   this.init = function(opts) {
 
+    this.width = opts.width;
+    this.height = opts.height;
+
     opts = merge(opts, {
       image: 'resources/images/space_pixel_background.png'
     });
@@ -28,9 +31,6 @@ exports = Class(ImageView, function(supr) {
   };
 
   this.build = function() {
-
-    this.width = device.width / device.devicePixelRatio;
-    this.height = device.height / device.devicePixelRatio;
 
     this.initialPaddleX = (this.width / 2) - (Paddle.PADDLE_WIDTH / 2);
     this.initialPaddleY = (this.height) - Paddle.PADDLE_BOTTOM_PADDING - (Paddle.PADDLE_HEIGHT / 2);

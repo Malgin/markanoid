@@ -27,5 +27,5 @@ exports = Class(ImageView, function (supr) {
   }
 });
 
-exports.BLOCK_WIDTH = 50;
+exports.BLOCK_WIDTH = 51;
 exports.BLOCK_HEIGHT = 20;

@@ -7,7 +7,7 @@ exports = Class(ViewPool, function(supr) {
 
     opts = merge(opts, {
       ctor: Block,
-      initCount: opts && opts.count || 60
+      initCount: opts && opts.count || 200
     });
 
     supr(this, 'init', [opts]);
