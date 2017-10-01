@@ -69,28 +69,29 @@ exports = Class(ImageView, function (supr) {
   };
 
   this.movingRight = function () {
-      return this.moving && this.velocity.x > 0;
+    return this.moving && this.velocity.x > 0;
   };
 
   this.movingLeft = function () {
-      return this.moving && this.velocity.x < 0;
+    return this.moving && this.velocity.x < 0;
   };
 
   this.movingDown = function () {
-      return this.moving && this.velocity.y > 0;
+    return this.moving && this.velocity.y > 0;
   };
 
   this.movingUp = function () {
-      return this.moving && this.velocity.y < 0;
+    return this.moving && this.velocity.y < 0;
   };
 
   this.resetPosition = function () {
-      this.updateOpts({
-        x: this.originalPosition.x,
-        y: this.originalPosition.y
-      });
-      this.velocity = this.originalVelocity;
-      this.originalVelocity = new Point(this.velocity.x, this.velocity.y);
+    this.moving = false;
+    this.updateOpts({
+      x: this.originalPosition.x,
+      y: this.originalPosition.y
+    });
+    this.velocity = this.originalVelocity;
+    this.originalVelocity = new Point(this.velocity.x, this.velocity.y);
   };
 
   this.tick = function (dt) {

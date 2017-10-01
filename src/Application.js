@@ -3,6 +3,7 @@ import device;
 import ui.TextView as TextView;
 import ui.StackView as StackView;
 
+import src.screens.MenuScreen as MenuScreen;
 import src.screens.GameScreen as GameScreen;
 
 exports = Class(GC.Application, function () {
@@ -27,7 +28,19 @@ exports = Class(GC.Application, function () {
       clip: true
     });
 
-    // TODO: initiate menu screen
+    var menuScreen = new MenuScreen({
+      superview: this
+    });
+
+    menuScreen.on('menu:startgame', function () {
+
+      // TODO stop playing menu music
+      // TODO start playing game music
+      rootView.push(gameScreen);
+      gameScreen.emit('game:reset');
+    });
+
+    menuScreen.show();
 
     // Initiate game screen
     var gameScreen = new GameScreen({
@@ -37,7 +50,14 @@ exports = Class(GC.Application, function () {
       height: this.baseHeight
     });
 
-    rootView.push(gameScreen); // Start the game right away. TODO: add menu screens
+    gameScreen.on('game:end', function () {
+
+      // TODO stop playing any music
+      // TODO start playing menu music
+      rootView.pop();
+    });
+
+    rootView.push(menuScreen);
 
   };
 

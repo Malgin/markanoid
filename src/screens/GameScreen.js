@@ -66,7 +66,12 @@ exports = Class(ImageView, function(supr) {
     this._levelManager = new LevelManager({
       gridSuperview: this
     });
-    this._blockGrid = this._levelManager.initLevel();
+
+    this.on('game:reset', bind(this, function () {
+      this._ball.resetPosition();
+      this._playerPaddle.resetPosition();
+      this._blockGrid = this._levelManager.initLevel('1');
+    }));
   };
 
   this.tick = function () {
@@ -103,10 +108,8 @@ exports = Class(ImageView, function(supr) {
           }
 
           if (this._blockGrid.blockCount === 0) {
-            // level complete
             if (this._levelManager.hasNextLevel()) {
 
-              this._ball.moving = false;
               this._ball.resetPosition();
               this._playerPaddle.resetPosition();
 
