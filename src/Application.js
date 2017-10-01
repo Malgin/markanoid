@@ -36,6 +36,7 @@ exports = Class(GC.Application, function () {
 
       // TODO stop playing menu music
       // TODO start playing game music
+      menuScreen.hide();
       rootView.push(gameScreen);
       gameScreen.emit('game:reset');
     });
@@ -55,6 +56,7 @@ exports = Class(GC.Application, function () {
       // TODO stop playing any music
       // TODO start playing menu music
       rootView.pop();
+      menuScreen.show();
     });
 
     rootView.push(menuScreen);

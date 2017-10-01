@@ -12,9 +12,7 @@ exports = Class(MenuView, function (supr) {
       items: [
         {
           item: 'Start game',
-          action: bind(this, function () {
-            this.emit('menu:startgame');
-          })
+          action: 'menu:startgame'
         },
         {
           item: 'Score',

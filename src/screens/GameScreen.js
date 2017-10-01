@@ -18,6 +18,8 @@ exports = Class(ImageView, function(supr) {
 
   this.init = function(opts) {
 
+    this.gameIsOn = false;
+
     this.width = opts.width;
     this.height = opts.height;
 
@@ -71,19 +73,41 @@ exports = Class(ImageView, function(supr) {
       this._ball.resetPosition();
       this._playerPaddle.resetPosition();
       this._blockGrid = this._levelManager.initLevel('1');
+
+      this.gameIsOn = true;
     }));
   };
 
   this.tick = function () {
 
-    this._blockCollision();
-    this._wallsAndPaddleCollision();
+    if (!this.gameIsOn) return;
+
+    if (!this._lostTheBall()) {
+      this._blockCollision();
+      this._wallsAndPaddleCollision();
+    } else {
+
+      // TODO Releases all viewpools
+      this._endTheGame();
+    }
+  };
+
+  this._endTheGame = function () {
+    this.gameIsOn = false;
+    this.emit('game:end');
+  };
+
+  this._lostTheBall = function () {
+    return this._ball.style.y >= this.height;
   };
 
   this._blockCollision = function () {
+
     for (var row = this._blockGrid._blockGrid.length - 1; row >= 0; row -= 1) {
 
       var blockRow = this._blockGrid._blockGrid[row];
+
+      // TODO: optimize collision: detect collision only if ball near the level of a block, either skip
 
       for (var col = 0; col < blockRow.length; col += 1) {
         var block = blockRow[col];
@@ -116,6 +140,7 @@ exports = Class(ImageView, function(supr) {
               this._blockGrid = this._levelManager.initNextLevel();
             } else {
               // win the game, back to menu
+              this._endTheGame();
             }
           }
 
@@ -130,6 +155,8 @@ exports = Class(ImageView, function(supr) {
     var ballCollisionCircle = this._ball.getCollisionCircle();
     var paddleCollisionBox = this._playerPaddle.getCollisionBox();
 
+    // TODO: optimize collision: detect collision only if ball is near the edges
+
     // make ball bounce off field edges
     if (this._ball.moving) {
       if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH)) && this._ball.movingRight() ||
@@ -139,8 +166,7 @@ exports = Class(ImageView, function(supr) {
       }
 
       if (this._ball.style.y <= BOUNCABLE_BORDER_WIDTH ||
-          (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown()) ||
-          this._ball.style.y >= this.height - BOUNCABLE_BORDER_WIDTH) {
+          (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown())) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
         this._ball.increaseVelocityIfNeeded();
       }
