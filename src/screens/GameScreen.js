@@ -72,7 +72,7 @@ exports = Class(ImageView, function(supr) {
     this.on('game:reset', bind(this, function () {
       this._ball.resetPosition();
       this._playerPaddle.resetPosition();
-      this._blockGrid = this._levelManager.initLevel('2');
+      this._blockGrid = this._levelManager.initLevel('4');
 
       this.gameIsOn = true;
     }));
@@ -115,6 +115,8 @@ exports = Class(ImageView, function(supr) {
         if (block === null) continue;
 
         if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
+
+          // TODO optimization: don't allow tow consecutive hits to the same block
 
           block.hit();
 

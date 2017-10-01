@@ -3,6 +3,7 @@ import ui.ViewPool as ViewPool;
 import .MoonYellowBlock as MoonYellowBlock;
 import .SteelBlock as SteelBlock;
 import .AsteroidBlueBlock as AsteroidBlueBlock;
+import .ObsidianBlock as ObsidianBlock;
 
 exports = Class(ViewPool, function(supr) {
   this.init = function (opts) {
@@ -18,6 +19,9 @@ exports = Class(ViewPool, function(supr) {
         break;
       case 'asteroid_blue':
         block = AsteroidBlueBlock;
+        break;
+      case 'obsidian':
+        block = ObsidianBlock;
         break;
       default:
         console.log(opts.blockType);
