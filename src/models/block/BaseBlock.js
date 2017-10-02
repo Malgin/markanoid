@@ -6,7 +6,8 @@ exports = Class(ImageView, function (supr) {
   this.init = function (opts) {
 
     this.collisionBox = new Rectangle();
-    this._hitsLeft = opts.hitsToDestroy | 1;
+    this._hitPoints = opts.hitPoints | 1;
+    this._scoresForDestroying = opts.scoresForDestroying | 10;
 
     opts = merge(opts, {
       width: exports.BLOCK_WIDTH,
@@ -28,12 +29,16 @@ exports = Class(ImageView, function (supr) {
   };
 
   this.hit = function () {
-    if (this._hitsLeft > 0) this._hitsLeft -= 1;
+    if (this._hitPoints > 0) this._hitPoints -= 1;
   };
 
   this.isDestroyed = function () {
-    return this._hitsLeft === 0;
+    return this._hitPoints === 0;
   };
+
+  this.getScore = function () {
+    return this._scoresForDestroying;
+  }
 });
 
 exports.BLOCK_WIDTH = 51;

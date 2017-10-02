@@ -1,7 +1,7 @@
 import ..models.block.BlockPool as BlockPool;
 import ..models.block.BaseBlock as Block;
 
-const BOUNCABLE_BORDER_WIDTH = 10;
+const SCORES_BORDER = 50;
 const DISTANCE_BETWEEN_BLOCKS = 5;
 const NUMBER_OF_BLOCKS_IN_ROW = 10;
 
@@ -36,12 +36,8 @@ exports = Class(function () {
         if (blockType !== null) {
           var blockView = this._obtainView(blockType);
 
-          if (col === 0) {
-            var xPosition = BOUNCABLE_BORDER_WIDTH + Block.BLOCK_WIDTH * this._blockGrid[row].length;
-          } else {
-            var xPosition = BOUNCABLE_BORDER_WIDTH + DISTANCE_BETWEEN_BLOCKS * (this._blockGrid[row].length) + Block.BLOCK_WIDTH * this._blockGrid[row].length;
-          }
-          var yPosition = BOUNCABLE_BORDER_WIDTH + DISTANCE_BETWEEN_BLOCKS * (this._blockGrid.length + 1) + Block.BLOCK_HEIGHT * this._blockGrid.length;
+          var xPosition = exports.BOUNCABLE_BORDER_WIDTH + DISTANCE_BETWEEN_BLOCKS * (this._blockGrid[row].length) + Block.BLOCK_WIDTH * this._blockGrid[row].length;
+          var yPosition = exports.BOUNCABLE_BORDER_WIDTH + DISTANCE_BETWEEN_BLOCKS * (this._blockGrid.length - 1) + Block.BLOCK_HEIGHT * (this._blockGrid.length - 1) + SCORES_BORDER;
 
           blockView.updateOpts({
             superview: this.superview,
@@ -76,3 +72,5 @@ exports = Class(function () {
     return view;
   }
 });
+
+exports.BOUNCABLE_BORDER_WIDTH = 10;

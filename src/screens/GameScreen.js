@@ -11,8 +11,7 @@ import ..models.block.BaseBlock as Block;
 
 import ..services.BlockGrid as BlockGrid;
 import ..services.LevelManager as LevelManager;
-
-const BOUNCABLE_BORDER_WIDTH = 10;
+import ..services.ScoresManager as ScoresManager;
 
 exports = Class(ImageView, function(supr) {
 
@@ -48,6 +47,10 @@ exports = Class(ImageView, function(supr) {
       x: this.initialPaddleX + (Paddle.PADDLE_WIDTH * 2 / 3) - Ball.BALL_RADIUS,
       y: this.initialPaddleY - (Ball.BALL_RADIUS * 2),
       velocity: new Point(3, -8)
+    });
+
+    this._scoresManager = new ScoresManager({
+      superview: this
     });
 
     this.on('InputMove', bind(this, function (event, point) {
@@ -121,9 +124,13 @@ exports = Class(ImageView, function(supr) {
           block.hit();
 
           if (block.isDestroyed()) {
+            this._scoresManager.addScoresForBlock(block);
+
             this._blockGrid.destroyBlock(block);
 
             this._blockGrid._blockGrid[row][col] = null;
+
+
 
             if (this._blockGrid.blockCount === 0) {
               if (this._levelManager.hasNextLevel()) {
@@ -168,13 +175,13 @@ exports = Class(ImageView, function(supr) {
 
     // make ball bounce off field edges
     if (this._ball.moving) {
-      if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BOUNCABLE_BORDER_WIDTH)) && this._ball.movingRight() ||
-          (this._ball.style.x <= BOUNCABLE_BORDER_WIDTH) && this._ball.movingLeft()) {
+      if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BlockGrid.BOUNCABLE_BORDER_WIDTH)) && this._ball.movingRight() ||
+          (this._ball.style.x <= BlockGrid.BOUNCABLE_BORDER_WIDTH) && this._ball.movingLeft()) {
         this._ball.velocity.x = -1 * this._ball.velocity.x; // bounce off walls
         this._ball.increaseVelocityIfNeeded();
       }
 
-      if (this._ball.style.y <= BOUNCABLE_BORDER_WIDTH ||
+      if (this._ball.style.y <= BlockGrid.BOUNCABLE_BORDER_WIDTH ||
           (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown())) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
         this._ball.increaseVelocityIfNeeded();

@@ -8,7 +8,8 @@ exports = Class(BaseBlock, function (supr) {
 
     opts = merge(opts, {
       backgroundColor: '#2f4f4f',
-      hitsToDestroy: 10
+      hitPoints: 10,
+      scoresForDestroying: 50
     });
 
     supr(this, 'init', [opts]);
