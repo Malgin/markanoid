@@ -45,6 +45,9 @@ exports = Class(function () {
             visible: true
           });
 
+          blockView.setGridRow(row);
+          blockView.setGridCol(col);
+
           this._blockGrid[row][col] = blockView;
           this.blockCount += 1;
         } else {
@@ -54,8 +57,23 @@ exports = Class(function () {
     }
   };
 
+  this.resetGrid = function () {
+    for (var row = 0; row < this._blockGrid.length; row++) {
+      for (var col = 0; col < this._blockGrid[row].length; col++) {
+        var blockView = this._blockGrid[row][col];
+        if (blockView !== null) {
+          if (blockView === undefined) {
+            console.log('UNDEFINED!');
+          }
+          this.destroyBlock(blockView);
+        }
+      }
+    }
+  };
+
   this.destroyBlock = function (block) {
     block.removeFromSuperview();
+    this._blockGrid[block.getGridRow()][block.getGridCol()] = null;
     this._blockPools[block.blockType].releaseView(block);
     this.blockCount -= 1;
   };

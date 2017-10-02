@@ -38,7 +38,23 @@ exports = Class(ImageView, function (supr) {
 
   this.getScore = function () {
     return this._scoresForDestroying;
-  }
+  };
+
+  this.setGridRow = function (value) {
+    this._gridRow = value;
+  };
+
+  this.getGridRow = function () {
+    return this._gridRow;
+  };
+
+  this.setGridCol = function (value) {
+    this._gridCol = value;
+  };
+
+  this.getGridCol = function () {
+    return this._gridCol;
+  };
 });
 
 exports.BLOCK_WIDTH = 51;

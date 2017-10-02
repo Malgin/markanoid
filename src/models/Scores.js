@@ -7,7 +7,7 @@ exports = Class(TextView, function (supr) {
       height: 50,
       x: 25,
       y: 0,
-      autosize: false,
+      autoSize: false,
       verticalAlign: 'middle',
       horizontalAlign: 'left',
       wrap: false,
