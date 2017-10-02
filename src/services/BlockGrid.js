@@ -51,6 +51,7 @@ exports = Class(function () {
 
           this._blockGrid[row][col] = blockView;
           this._blockCount += 1;
+
           if (blockType === 'steel') this._indestructibleBlockCount += 1;
         } else {
           this._blockGrid[row][col] = null;
@@ -64,9 +65,6 @@ exports = Class(function () {
       for (var col = 0; col < this._blockGrid[row].length; col++) {
         var blockView = this._blockGrid[row][col];
         if (blockView !== null) {
-          if (blockView === undefined) {
-            console.log('UNDEFINED!');
-          }
           this.destroyBlock(blockView);
         }
       }
