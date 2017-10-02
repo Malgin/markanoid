@@ -13,7 +13,8 @@ exports = Class(function () {
 
     this._blockPools = {};
     this._blockGrid = [];
-    this.blockCount = 0;
+    this._blockCount = 0;
+    this._indestructibleBlockCount = 0;
 
     this.build();
   };
@@ -49,7 +50,8 @@ exports = Class(function () {
           blockView.setGridCol(col);
 
           this._blockGrid[row][col] = blockView;
-          this.blockCount += 1;
+          this._blockCount += 1;
+          if (blockType === 'steel') this._indestructibleBlockCount += 1;
         } else {
           this._blockGrid[row][col] = null;
         }
@@ -75,7 +77,11 @@ exports = Class(function () {
     block.removeFromSuperview();
     this._blockGrid[block.getGridRow()][block.getGridCol()] = null;
     this._blockPools[block.blockType].releaseView(block);
-    this.blockCount -= 1;
+    this._blockCount -= 1;
+  };
+
+  this.anyDestructibleBlocksLeft = function () {
+    return this._blockCount - this._indestructibleBlockCount;
   };
 
   this._obtainView = function (blockType) {

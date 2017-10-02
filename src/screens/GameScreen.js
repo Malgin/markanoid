@@ -88,7 +88,7 @@ exports = Class(ImageView, function(supr) {
       this._scoresManager.addScoresForBlock(block);
       this._blockGrid.destroyBlock(block);
 
-      if (this._blockGrid.blockCount === 0) {
+      if (!this._blockGrid.anyDestructibleBlocksLeft()) {
         if (this._levelManager.hasNextLevel()) {
 
           this._ball.resetPosition();
@@ -127,7 +127,7 @@ exports = Class(ImageView, function(supr) {
       this._playerPaddle.resetPosition();
       this._livesManager.resetLives();
       this._scoresManager.resetScores();
-      this._blockGrid = this._levelManager.initLevel('1');
+      this._blockGrid = this._levelManager.initLevel('4');
 
       this.gameIsOn = true;
     }));
