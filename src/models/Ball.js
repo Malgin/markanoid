@@ -3,6 +3,8 @@ import math.geom.Circle as Circle;
 
 import ui.ImageView as ImageView;
 
+import .Paddle as Paddle;
+
 const NUMBER_OF_BOUNCES_BEFORE_VELOCITY_INCREASE = 10;
 const MAX_BALL_X_ABS_VELOCITY = 15;
 const MAX_BALL_Y_ABS_VELOCITY = 20;
@@ -84,14 +86,23 @@ exports = Class(ImageView, function (supr) {
     return this.moving && this.velocity.y < 0;
   };
 
-  this.resetPosition = function () {
+  this.resetPosition = function (paddle = null) {
     this.moving = false;
-    this.updateOpts({
-      x: this.originalPosition.x,
-      y: this.originalPosition.y
-    });
     this.velocity = this.originalVelocity;
     this.originalVelocity = new Point(this.velocity.x, this.velocity.y);
+
+    if (paddle === null) {
+      var newXPosition = this.originalPosition.x;
+      var newYPosition = this.originalPosition.y;
+    } else {
+      var newXPosition = paddle.style.x + (Paddle.PADDLE_WIDTH * 2 / 3) - exports.BALL_RADIUS;
+      var newYPosition = paddle.style.y - (exports.BALL_RADIUS * 2);
+    }
+
+    this.updateOpts({
+      x: newXPosition,
+      y: newYPosition
+    });
   };
 
   this.tick = function (dt) {

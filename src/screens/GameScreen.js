@@ -12,6 +12,7 @@ import ..models.block.BaseBlock as Block;
 import ..services.BlockGrid as BlockGrid;
 import ..services.LevelManager as LevelManager;
 import ..services.ScoresManager as ScoresManager;
+import ..services.LivesManager as LivesManager;
 
 exports = Class(ImageView, function(supr) {
 
@@ -49,7 +50,15 @@ exports = Class(ImageView, function(supr) {
       velocity: new Point(3, -8)
     });
 
+    this._levelManager = new LevelManager({
+      superview: this
+    });
+
     this._scoresManager = new ScoresManager({
+      superview: this
+    });
+
+    this._livesManager = new LivesManager({
       superview: this
     });
 
@@ -68,14 +77,12 @@ exports = Class(ImageView, function(supr) {
       if (!this._ball.moving) this._ball.moving = true;
     }));
 
-    this._levelManager = new LevelManager({
-      gridSuperview: this
-    });
+
 
     this.on('game:reset', bind(this, function () {
       this._ball.resetPosition();
       this._playerPaddle.resetPosition();
-      this._blockGrid = this._levelManager.initLevel('4');
+      this._blockGrid = this._levelManager.initLevel('1');
 
       this.gameIsOn = true;
     }));
@@ -91,7 +98,13 @@ exports = Class(ImageView, function(supr) {
     } else {
 
       // TODO Releases all viewpools
-      this._endTheGame();
+      this._livesManager.looseABall();
+
+      if (this._livesManager.anyBallsLeft()) {
+        this._ball.resetPosition(this._playerPaddle);
+      } else {
+        this._endTheGame();
+      }
     }
   };
 
@@ -129,8 +142,6 @@ exports = Class(ImageView, function(supr) {
             this._blockGrid.destroyBlock(block);
 
             this._blockGrid._blockGrid[row][col] = null;
-
-
 
             if (this._blockGrid.blockCount === 0) {
               if (this._levelManager.hasNextLevel()) {
@@ -175,13 +186,13 @@ exports = Class(ImageView, function(supr) {
 
     // make ball bounce off field edges
     if (this._ball.moving) {
-      if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BlockGrid.BOUNCABLE_BORDER_WIDTH)) && this._ball.movingRight() ||
-          (this._ball.style.x <= BlockGrid.BOUNCABLE_BORDER_WIDTH) && this._ball.movingLeft()) {
+      if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BlockGrid.BOUNCABLE_WALLS_WIDTH)) && this._ball.movingRight() ||
+          (this._ball.style.x <= BlockGrid.BOUNCABLE_WALLS_WIDTH) && this._ball.movingLeft()) {
         this._ball.velocity.x = -1 * this._ball.velocity.x; // bounce off walls
         this._ball.increaseVelocityIfNeeded();
       }
 
-      if (this._ball.style.y <= BlockGrid.BOUNCABLE_BORDER_WIDTH ||
+      if ((this._ball.style.y <= BlockGrid.BOUNCABLE_CEILING_WIDTH && this._ball.movingUp()) ||
           (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown())) {
         this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
         this._ball.increaseVelocityIfNeeded();

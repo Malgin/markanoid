@@ -3,7 +3,7 @@ import ..services.BlockGrid as BlockGrid;
 exports = Class(function () {
 
   this.init = function (opts) {
-    this._gridSuperview = opts.gridSuperview;
+    this._superview = opts.superview;
     this._currentLevel = null;
   };
 
@@ -11,7 +11,7 @@ exports = Class(function () {
     this._currentLevel = JSON.parse(CACHE[`resources/levels/${level}.json`]);
 
     return new BlockGrid({
-      superview: this._gridSuperview,
+      superview: this._superview,
       layout: this._currentLevel.levelLayout
     });
   };
