@@ -14,6 +14,7 @@ import ..services.BlockGrid as BlockGrid;
 import ..services.LevelManager as LevelManager;
 import ..services.ScoresManager as ScoresManager;
 import ..services.LivesManager as LivesManager;
+import ..services.CollisionManager as CollisionManager;
 
 exports = Class(ImageView, function(supr) {
 
@@ -69,7 +70,7 @@ exports = Class(ImageView, function(supr) {
       height: 150,
       autoFontSize: true,
       x: this.width / 4,
-      y: this.height / 2,
+      y: this.height / 3,
       verticalAlign: 'middle',
       horizontalAlign: 'left',
       wrap: false,
@@ -78,6 +79,28 @@ exports = Class(ImageView, function(supr) {
     });
 
     this._endGameScreen.hide();
+
+    this._collisionManager = new CollisionManager({
+      superview: this
+    });
+    this._collisionManager.on('collision:blockDestroyed', bind(this, function (block) {
+
+      this._scoresManager.addScoresForBlock(block);
+      this._blockGrid.destroyBlock(block);
+
+      if (this._blockGrid.blockCount === 0) {
+        if (this._levelManager.hasNextLevel()) {
+
+          this._ball.resetPosition();
+          this._playerPaddle.resetPosition();
+
+          this._blockGrid = this._levelManager.initNextLevel();
+        } else {
+          // win the game, back to menu
+          this._winTheGame();
+        }
+      }
+    }));
 
     this.on('InputMove', bind(this, function (event, point) {
 
@@ -115,11 +138,11 @@ exports = Class(ImageView, function(supr) {
     if (!this.gameIsOn) return;
 
     if (!this._lostTheBall()) {
-      this._blockCollision();
-      this._wallsAndPaddleCollision();
+
+      this._collisionManager.blockCollision(this._ball, this._blockGrid);
+      this._collisionManager.wallsAndPaddleCollision(this._ball, this._playerPaddle);
     } else {
 
-      // TODO Releases all viewpools
       this._livesManager.looseABall();
 
       if (this._livesManager.anyBallsLeft()) {
@@ -144,129 +167,5 @@ exports = Class(ImageView, function(supr) {
 
   this._lostTheBall = function () {
     return this._ball.style.y >= this.height;
-  };
-
-  this._blockCollision = function () {
-
-    for (var row = this._blockGrid._blockGrid.length - 1; row >= 0; row -= 1) {
-
-      var blockRow = this._blockGrid._blockGrid[row];
-
-      // TODO: optimize collision: detect collision only if ball near the level of a block, either skip
-
-      for (var col = 0; col < blockRow.length; col += 1) {
-        var block = blockRow[col];
-
-        if (block === null) continue;
-
-        if (intersect.circleAndRect(this._ball.getCollisionCircle(), block.getCollisionBox())) {
-
-          // TODO optimization: don't allow tow consecutive hits to the same block
-
-          block.hit();
-
-          if (block.isDestroyed()) {
-            this._scoresManager.addScoresForBlock(block);
-
-            this._blockGrid.destroyBlock(block);
-
-            this._blockGrid._blockGrid[row][col] = null;
-
-            if (this._blockGrid.blockCount === 0) {
-              if (this._levelManager.hasNextLevel()) {
-
-                this._ball.resetPosition();
-                this._playerPaddle.resetPosition();
-
-                this._blockGrid = this._levelManager.initNextLevel();
-              } else {
-                // win the game, back to menu
-                this._winTheGame();
-              }
-
-              return;
-            }
-          }
-
-          // figure out from which direction we had a collision
-          if (this._ball.getCollisionCircle().x >= block.style.x &&
-              this._ball.getCollisionCircle().x <= block.style.x + Block.BLOCK_WIDTH) {
-
-            this._ball.velocity.y = -1 * this._ball.velocity.y;
-            this._ball.increaseVelocityIfNeeded();
-          } else {
-
-            this._ball.velocity.x = -1 * this._ball.velocity.x;
-            this._ball.increaseVelocityIfNeeded();
-          }
-
-          return; // stop iterating over blocks, as we've found a collision
-        }
-      }
-    }
-  };
-
-  this._wallsAndPaddleCollision = function () {
-
-    var ballCollisionCircle = this._ball.getCollisionCircle();
-    var paddleCollisionBox = this._playerPaddle.getCollisionBox();
-
-    // TODO: optimize collision: detect collision only if ball is near the edges
-
-    // make ball bounce off field edges
-    if (this._ball.moving) {
-      if ((this._ball.style.x >= this.width - (Ball.BALL_RADIUS * 2 + BlockGrid.BOUNCABLE_WALLS_WIDTH)) && this._ball.movingRight() ||
-          (this._ball.style.x <= BlockGrid.BOUNCABLE_WALLS_WIDTH) && this._ball.movingLeft()) {
-        this._ball.velocity.x = -1 * this._ball.velocity.x; // bounce off walls
-        this._ball.increaseVelocityIfNeeded();
-      }
-
-      if ((this._ball.style.y <= BlockGrid.BOUNCABLE_CEILING_WIDTH && this._ball.movingUp()) ||
-          (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingDown())) {
-        this._ball.velocity.y = -1 * this._ball.velocity.y; // bounce off ceiling or paddle
-        this._ball.increaseVelocityIfNeeded();
-      }
-
-      if (intersect.circleAndRect(ballCollisionCircle, paddleCollisionBox) && this._ball.movingUp()) {
-
-        if (this._ball.velocity.x === 0) this._ball.velocity.x = 3;
-        else if (Math.abs(this._ball.velocity.x) < 3) {
-          if (this._ball.velocity.x < 0) this._ball.velocity.x = -3;
-          else                           this._ball.velocity.x = 3;
-        } else {
-          if (ballCollisionCircle.x < paddleCollisionBox.x + (paddleCollisionBox.width / 5)) {
-
-            // hit left edge of a paddle
-            console.log(`BEFORE Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
-
-            if (this._ball.movingLeft()) {
-
-              this._ball.increaseXVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.x) / 4));
-              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
-            } else if (this._ball.movingRight()) {
-              this._ball.velocity.x = -1 * this._ball.velocity.x;
-            }
-
-            console.log(`Decrease VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y}`);
-          } else if (ballCollisionCircle.x > paddleCollisionBox.x + paddleCollisionBox.width - (paddleCollisionBox.width / 5)) {
-
-            // hit right edge of a paddle
-            console.log(`BEFORE Increase VELOCITY: X: ${this._ball.velocity.x } Y: ${this._ball.velocity.y }`);
-
-            if (this._ball.movingLeft()) {
-              this._ball.velocity.x = -1 * this._ball.velocity.x;
-            } else if (this._ball.movingRight()) {
-
-              this._ball.increaseXVelocity(Math.ceil(Math.abs(this._ball.velocity.x) / 4));
-              this._ball.increaseYVelocity(-1 * Math.ceil(Math.abs(this._ball.velocity.y) / 5))
-            }
-
-            console.log(`Increase VELOCITY: X: ${this._ball.velocity.x} Y: ${this._ball.velocity.y }`);
-          }
-        }
-      }
-
-      // TODO make ball appear on other side of an edge
-    }
   };
 });
