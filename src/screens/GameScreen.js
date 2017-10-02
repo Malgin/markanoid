@@ -127,7 +127,7 @@ exports = Class(ImageView, function(supr) {
       this._playerPaddle.resetPosition();
       this._livesManager.resetLives();
       this._scoresManager.resetScores();
-      this._blockGrid = this._levelManager.initLevel('4');
+      this._blockGrid = this._levelManager.initLevel('1');
 
       this.gameIsOn = true;
     }));
@@ -154,6 +154,7 @@ exports = Class(ImageView, function(supr) {
   };
 
   this._winTheGame = function () {
+    this._ball.moving = false;
     this._endGameScreen.setText(`You won! \n Score: ${this._scoresManager.getTotalScore()}`);
     this._endGameScreen.show();
     this.gameIsOn = false;
