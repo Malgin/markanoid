@@ -80,7 +80,7 @@ exports = Class(EventEmitter, function (supr) {
         if (ball.velocity.x === 0) ball.velocity.x = 3;
         else if (Math.abs(ball.velocity.x) < 3) {
           if (ball.velocity.x < 0) ball.velocity.x = -3;
-          else                           ball.velocity.x = 3;
+          else                     ball.velocity.x = 3;
         } else {
           if (ballCollisionCircle.x < paddleCollisionBox.x + (paddleCollisionBox.width / 5)) {
 
